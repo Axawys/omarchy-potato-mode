@@ -1,0 +1,42 @@
+#!/bin/bash
+# Potato mode: a flat, animation-free Hyprland for weak machines.
+# Usage: potato-mode [on|off|toggle|status|sync]
+#   sync  turn on or off to match whether the plugin is enabled in omarchy-shell
+
+PLUGIN_DIR="$(dirname "$(readlink -f "$0")")"
+SOURCE="$PLUGIN_DIR/potato.lua"
+FLAG_FILE="$HOME/.local/state/omarchy/toggles/hypr/potato-mode.lua"
+PLUGIN_ID="io.github.axawys.potato-mode"
+
+status() { [[ -f $FLAG_FILE ]] && echo on || echo off; }
+
+on() {
+  [[ -f $SOURCE ]] || return 1
+  mkdir -p "$(dirname "$FLAG_FILE")"
+  cmp -s "$SOURCE" "$FLAG_FILE" && return 1
+  cp "$SOURCE" "$FLAG_FILE"
+}
+
+off() {
+  [[ -f $FLAG_FILE ]] || return 1
+  rm -f "$FLAG_FILE"
+}
+
+plugin_enabled() {
+  omarchy plugin list --json | jq -e --arg id "$PLUGIN_ID" 'any(.[]; .id == $id and .enabled)' >/dev/null
+}
+
+case "${1:-toggle}" in
+  on) on ;;
+  off) off ;;
+  toggle) if [[ -f $FLAG_FILE ]]; then off; else on; fi ;;
+  sync)
+    # Give `omarchy plugin disable` time to finish writing shell.json.
+    sleep 1
+    if plugin_enabled; then on; else off; fi
+    ;;
+  status) status; exit 0 ;;
+  *) echo "Usage: potato-mode [on|off|toggle|status|sync]" >&2; exit 1 ;;
+esac && hyprctl reload >/dev/null
+
+status

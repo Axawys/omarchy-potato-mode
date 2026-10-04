@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.axawys.potato-mode",
+  "name": "Potato Mode",
+  "version": "1.0.0",
+  "author": "axawys",
+  "license": "MIT",
+  "description": "While enabled, Hyprland runs as a flat, sway-like compositor for weak machines: no animations, blur, shadows, rounding, dimming or transparency",
+  "kinds": ["service"],
+  "entryPoints": { "service": "Service.qml" }
+}
