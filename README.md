@@ -1,5 +1,7 @@
 # Potato Mode for Omarchy
 
+![Potato Mode: before and after](preview.png)
+
 An Omarchy shell plugin that makes Hyprland light enough for weak hardware.
 While the plugin is enabled, Hyprland behaves like a flat, sway-like
 compositor:
